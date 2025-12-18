@@ -2,11 +2,12 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     id("maven-publish")
+    id ("com.google.devtools.ksp")
 }
 
 // JitPack-style coords
 group = "com.github.MehulKD"
-version = "1.0.0" // this should match your Git tag later
+version = "1.0.1" // this should match your Git tag later
 
 android {
     namespace = "com.saregama.android.audioplayer"
@@ -51,7 +52,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
+    ksp (libs.androidx.room.compiler)
     // Media3
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.session)

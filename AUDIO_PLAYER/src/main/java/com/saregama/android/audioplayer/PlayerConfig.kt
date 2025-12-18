@@ -1,5 +1,7 @@
 package com.saregama.android.audioplayer
 
+import com.saregama.android.audioplayer.model.OnMoreTracksRequested
+
 data class PlayerConfig(
     val handleAudioFocus: Boolean = true,
     val duckOnFocusLoss: Boolean = true,
@@ -10,6 +12,8 @@ data class PlayerConfig(
     // Hook: resolve saved queue IDs to Track list for restore
     val resolver: (suspend (ids: List<String>) -> List<com.saregama.android.audioplayer.model.Track>)? = null,
     val repository: RepositoryConfig? = null,
+    val initialPageSize: Int = 20,
+    val onMoreTracksRequested: OnMoreTracksRequested? = null
 ){
     data class RepositoryConfig(
         /** Return a stable SQLCipher passphrase (e.g., from Android Keystore). */

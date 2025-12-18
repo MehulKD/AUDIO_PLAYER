@@ -2,11 +2,17 @@ package com.saregama.android.audioplayer.data
 
 import android.content.Context
 import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.saregama.android.audioplayer.db.*
+import com.saregama.android.audioplayer.download.DownloadWorker
+import com.saregama.android.audioplayer.model.DownloadState
+import com.saregama.android.audioplayer.model.DownloadStatus
 import com.saregama.android.audioplayer.model.Track
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class AudioRepository(
@@ -33,11 +39,11 @@ class AudioRepository(
             .putString("artwork", track.artwork ?: "")
             .build()
 
-        val req = OneTimeWorkRequestBuilder<com.saregama.android.audioplayer.download.DownloadWorker>()
+        val req = OneTimeWorkRequestBuilder<DownloadWorker>()
             .setInputData(data)
             .build()
 
-        wm.enqueue(req)
+        wm.enqueueUniqueWork(track.id, ExistingWorkPolicy.KEEP,req)
     }
 
     // Optional helpers (useful for restore/search/seed)
@@ -51,7 +57,23 @@ class AudioRepository(
 
     fun observeIsFavorite(trackId: String) = db.favorites().observeIsFavorite(trackId)
 
+    fun isFavoriteNow(id: String): Boolean = db.favorites().isFavoriteNow(id) > 0
+
+    fun observeFavorites(): Flow<Set<String>> =
+        db.favorites().observeAll()              // Flow<List<FavoriteEntity>>
+            .map { list -> list.map { it.trackId }.toSet() }
+
     fun observeDownload(trackId: String) = db.downloads().observeDownload(trackId)
+
+    fun observeDownloads(): Flow<List<DownloadState>> = db.downloads().observeAll()
+
+    fun observeAllDownloads(): Flow<Map<String, DownloadState>> = db.downloads().observeAll().map { list -> list.associateBy { it.trackId } }
+
+    fun isDownloaded(mediaId: String) : Boolean = db.downloads().isDownloaded(mediaId)>0
+
+    fun observeDownloadIds(): Flow<Set<String>> =
+        db.downloads().observeAll()              // Flow<List<DownloadState>>
+            .map { list -> list.map { it.trackId }.toSet() }
 }
 
 // Mappers

@@ -9,14 +9,13 @@
 
         <!-- The main service, handles playback, playlists and media buttons -->
         <service
-            android:name=".kotlinaudio.service.MusicService"
+            android:name=".service.AudioPlayerService"
             android:enabled="true"
             android:exported="true"
             android:foregroundServiceType="mediaPlayback">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
-                <action android:name="androidx.media3.session.MediaLibraryService" />
-                <action android:name="android.media.browse.MediaBrowserService" />
+                <action android:name="androidx.media3.session.MediaSessionService" />
             </intent-filter>
         </service>
 

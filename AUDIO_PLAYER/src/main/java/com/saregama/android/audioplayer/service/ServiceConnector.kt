@@ -57,7 +57,15 @@ internal class ServiceConnector(private val appContext: Context, private val con
     }
 
     // Queue APIs
-    suspend fun setQueue(tracks: List<Track>, startIndex: Int, playWhenReady: Boolean) {
+    suspend fun setQueue(
+        tracks: List<Track>,
+        startIndex: Int,
+        playWhenReady: Boolean,
+        nextPageKey: String?=null                    // ⬅️ NEW
+    ) {
+        // store paging cursor so the service can request more later
+        QueuePagingState.nextPageKey = nextPageKey
+
         val mc = controller ?: return
         mc.stop()
         mc.clearMediaItems()

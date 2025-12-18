@@ -7,6 +7,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.saregama.android.audioplayer.data.DatabaseProvider
 import com.saregama.android.audioplayer.db.DownloadEntity
+import com.saregama.android.audioplayer.model.DownloadStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
@@ -25,7 +26,7 @@ class DownloadWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(c
 
         val db = DatabaseProvider.database()
 
-        db.downloads().upsert(DownloadEntity(trackId, 1, 0, null, null, null)) // running
+        db.downloads().upsert(DownloadEntity(trackId, DownloadStatus.DOWNLOADING, 0, null, null, null)) // running
 
         try {
             val audioDir = applicationContext.getExternalFilesDir("audio")!!.apply { mkdirs() }
@@ -39,7 +40,7 @@ class DownloadWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(c
                     db.downloads().upsert(
                         DownloadEntity(
                             trackId = trackId,
-                            status = 1,
+                            status = DownloadStatus.DOWNLOADING,
                             progress = pct,
                             filePath = null,
                             artworkPath = null,
@@ -58,10 +59,10 @@ class DownloadWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(c
                 if (artFile.exists() && artFile.length() > 0) artPath = artFile.absolutePath
             }
 
-            db.downloads().upsert(DownloadEntity(trackId, 2, 100, audioFile.absolutePath, artPath, null))
+            db.downloads().upsert(DownloadEntity(trackId, DownloadStatus.COMPLETED, 100, audioFile.absolutePath, artPath, null))
             Result.success()
         } catch (t: Throwable) {
-            db.downloads().upsert(DownloadEntity(trackId, -1, 0, null, null, t.message))
+            db.downloads().upsert(DownloadEntity(trackId, DownloadStatus.FAILED, 0, null, null, t.message))
             Result.failure()
         }
     }

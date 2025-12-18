@@ -2,6 +2,7 @@ package com.saregama.android.audioplayer.db
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.saregama.android.audioplayer.model.DownloadStatus
 
 
 @Entity(tableName = "tracks")
@@ -27,7 +28,7 @@ data class FavoriteEntity(
 @Entity(tableName = "downloads")
 data class DownloadEntity(
     @PrimaryKey val trackId: String,
-    val status: Int,   // 0 queued, 1 running, 2 success, -1 failed
+    val status: DownloadStatus,   // 0 queued, 1 running, 2 success, -1 failed
     val progress: Int, // 0..100
     val filePath: String?,
     val artworkPath: String?,

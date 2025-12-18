@@ -6,17 +6,25 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.media.session.MediaButtonReceiver
+import androidx.media3.session.CommandButton
+import androidx.media3.session.CommandButton.ICON_HEART_UNFILLED
+import androidx.media3.session.CommandButton.ICON_SHARE
+import androidx.media3.session.CommandButton.ICON_THUMB_DOWN_FILLED
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaStyleNotificationHelper
 import androidx.media3.session.legacy.MediaControllerCompat
 import androidx.media3.session.legacy.MediaSessionCompat
 import com.saregama.android.audioplayer.PlayerConfig
+import com.saregama.android.audioplayer.R
+import com.saregama.android.audioplayer.service.CustomActions.CMD_DOWNLOAD
+import com.saregama.android.audioplayer.service.CustomActions.CMD_TOGGLE_FAVORITE
 
 internal object CustomActions {
     const val TOGGLE_FAVORITE = "com.saregama.android.audioplayer.TOGGLE_FAVORITE"
@@ -25,8 +33,22 @@ internal object CustomActions {
     val CMD_DOWNLOAD = androidx.media3.session.SessionCommand(DOWNLOAD, Bundle.EMPTY)
 }
 
+/*val likeCommandButton = CommandButton.Builder(ICON_HEART_UNFILLED)
+    .setSessionCommand(CMD_TOGGLE_FAVORITE)
+    .setDisplayName("Favourite")
+    .setExtras(Bundle.EMPTY) // Optional: extra info
+    .build()
+
+val downloadButton = CommandButton.Builder(android.R.drawable.stat_sys_download)
+    .setSessionCommand(CMD_DOWNLOAD)
+    .setDisplayName("Download")
+    .setExtras(Bundle.EMPTY) // Optional: extra info
+    .build()*/
+
 internal class NotificationActionReceiver(private val onAction: (String) -> Unit) : android.content.BroadcastReceiver() {
-    override fun onReceive(context: Context?, intent: Intent?) { intent?.action?.let(onAction) }
+    override fun onReceive(context: Context?, intent: Intent?) {
+        intent?.action?.let(onAction)
+    }
 }
 
 internal class NotificationProvider(
@@ -95,6 +117,7 @@ internal class NotificationProvider(
         )
         val dl = NotificationCompat.Action(android.R.drawable.stat_sys_download, "DL", dlPI)
 
+        session.platformToken
         return NotificationCompat.Builder(context, channelId)
             .setSmallIcon(config.smallIconResId ?: android.R.drawable.stat_sys_headset)
             .setContentTitle(player.mediaMetadata.title)

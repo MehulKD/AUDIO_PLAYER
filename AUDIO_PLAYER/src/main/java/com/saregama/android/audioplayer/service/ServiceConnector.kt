@@ -85,6 +85,7 @@ internal class ServiceConnector(private val appContext: Context, private val con
     fun stop() { controller?.stop() }
     fun seekTo(positionMs: Long) { controller?.seekTo(positionMs) }
     fun skipToNext() { controller?.seekToNext() }
+    fun skipTo(index: Int) { controller?.seekTo(index,0) }
     fun skipToPrevious() { controller?.seekToPrevious() }
     fun setRepeatMode(mode: Int) { controller?.repeatMode = mode }
     fun setShuffleMode(enabled: Boolean) { controller?.shuffleModeEnabled = enabled }

@@ -86,6 +86,7 @@ object AudioPlayer {
     fun stop() = requireConnector().stop()
     fun seekTo(positionMs: Long) = requireConnector().seekTo(positionMs)
     fun skipToNext() = requireConnector().skipToNext()
+    fun skipTo(index: Int) = requireConnector().skipTo(index)
     fun skipToPrevious() = requireConnector().skipToPrevious()
     fun setRepeatMode(mode: Int) = requireConnector().setRepeatMode(mode)
     fun setShuffleMode(enabled: Boolean) = requireConnector().setShuffleMode(enabled)

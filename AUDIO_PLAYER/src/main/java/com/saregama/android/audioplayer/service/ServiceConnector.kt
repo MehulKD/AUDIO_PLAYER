@@ -69,13 +69,15 @@ internal class ServiceConnector(private val appContext: Context, private val con
 
         if (!shouldRequest) return
        scope.launch {
-           config.onMoreTracksRequested?.loadMore(
+           val page=config.onMoreTracksRequested?.loadMore(
                TrackPageRequest(
                    lastTrackId =currentQueueIds().last(),
                    nextPageKey = QueuePagingState.nextPageKey,
                    pageSize = 16
                )
            )
+           page?.tracks?.let { add(it) }
+           QueuePagingState.nextPageKey = page?.nextPageKey
        }
     }
 

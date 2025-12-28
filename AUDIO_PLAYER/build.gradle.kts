@@ -7,7 +7,7 @@ plugins {
 
 // JitPack-style coords
 group = "com.github.MehulKD"
-version = "1.0.3" // this should match your Git tag later
+version = "1.0.4" // this should match your Git tag later
 
 android {
     namespace = "com.saregama.android.audioplayer"

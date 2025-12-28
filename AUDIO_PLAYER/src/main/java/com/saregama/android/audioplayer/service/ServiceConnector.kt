@@ -7,9 +7,11 @@ import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.saregama.android.audioplayer.PlayerConfig
+import com.saregama.android.audioplayer.model.OnMoreTracksRequested
 import com.saregama.android.audioplayer.model.PlaybackEvent
 import com.saregama.android.audioplayer.model.PlaybackState
 import com.saregama.android.audioplayer.model.Track
+import com.saregama.android.audioplayer.model.TrackPageRequest
 import com.saregama.android.audioplayer.state.PlaybackStateStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -52,9 +54,31 @@ internal class ServiceConnector(private val appContext: Context, private val con
             }
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 eventFlow.tryEmit(PlaybackEvent.TrackChanged(mc.currentMediaItemIndex))
+                maybeRequestMoreTracks(mc)
             }
         })
     }
+
+   private fun maybeRequestMoreTracks(mc: MediaController) {
+        val total = mc.mediaItemCount
+        val index = mc.currentMediaItemIndex
+
+        // Trigger when user reaches last 2 tracks
+        val shouldRequest = QueuePagingState.nextPageKey != null &&
+                    index >= total - 2
+
+        if (!shouldRequest) return
+       scope.launch {
+           config.onMoreTracksRequested?.loadMore(
+               TrackPageRequest(
+                   lastTrackId =currentQueueIds().last(),
+                   nextPageKey = QueuePagingState.nextPageKey,
+                   pageSize = 16
+               )
+           )
+       }
+    }
+
 
     // Queue APIs
     suspend fun setQueue(

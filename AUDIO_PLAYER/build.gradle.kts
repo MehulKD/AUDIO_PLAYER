@@ -7,7 +7,7 @@ plugins {
 
 // JitPack-style coords
 group = "com.github.MehulKD"
-version = "1.0.2" // this should match your Git tag later
+version = "1.0.3" // this should match your Git tag later
 
 android {
     namespace = "com.saregama.android.audioplayer"
@@ -69,7 +69,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
 
     // SQLCipher
-    implementation(libs.android.database.sqlcipher)
+//    implementation(libs.android.database.sqlcipher)
 }
 
 // JitPack only needs publishing -> mavenLocal, no remote repo block needed

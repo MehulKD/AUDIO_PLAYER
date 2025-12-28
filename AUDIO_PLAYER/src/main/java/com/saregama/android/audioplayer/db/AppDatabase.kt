@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import net.sqlcipher.database.SupportFactory
 
 @Database(entities = [TrackEntity::class, FavoriteEntity::class, DownloadEntity::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
@@ -14,7 +13,7 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         @Volatile private var INSTANCE: AppDatabase? = null
         fun get(context: Context, passphrase: ByteArray): AppDatabase = INSTANCE ?: synchronized(this) {
-            INSTANCE ?: Room.databaseBuilder(context, AppDatabase::class.java, "ap_encrypted.db")
+            INSTANCE ?: Room.databaseBuilder(context, AppDatabase::class.java, "audio_lib_.db")
 //                .openHelperFactory(SupportFactory(passphrase))
                 .fallbackToDestructiveMigration(false)
                 .build()
